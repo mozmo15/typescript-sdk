@@ -194,15 +194,16 @@ export function normalizeObjectSchema(schema: AnySchema | ZodRawShapeCompat | un
  */
 export function getParseErrorMessage(error: unknown): string {
     if (error && typeof error === 'object') {
-        // Try common error structures
-        if ('message' in error && typeof error.message === 'string') {
-            return error.message;
-        }
+        // When present, prioritize custom error
         if ('issues' in error && Array.isArray(error.issues) && error.issues.length > 0) {
             const firstIssue = error.issues[0];
             if (firstIssue && typeof firstIssue === 'object' && 'message' in firstIssue) {
                 return String(firstIssue.message);
             }
+        }
+        // Try common error structures
+        if ('message' in error && typeof error.message === 'string') {
+            return error.message;
         }
         // Fallback: try to stringify the error
         try {
